@@ -11,7 +11,9 @@ TEST(RootTests, HandleImagenaryRoots) {
 }
 
 TEST(RootTests, HandleTwoRoots) {
-    EXPECT_THAT(Math::solve(1, 0, -1), ::testing::ElementsAreArray({1, -1})) << "Wrong roots!";
+    std::vector<double> roots = Math::solve(1, 0, -1);
+    std::sort(roots.begin(), roots.end());
+    EXPECT_THAT(roots, ::testing::ElementsAreArray({-1, 1})) << "Wrong roots!";
 }
 
 TEST(RootTests, HandleTwoSameRoots) {

@@ -9,8 +9,10 @@
 #include <cmath>
 #include <iomanip>
 namespace Math {
-    bool close_to_zero(double number) {
-        return number < 0.001;
+    double default_eps = 0.001;
+
+    bool close_to_zero(double number, double eps = default_eps) {
+        return abs(number) < eps;
     }
 
     std::vector<double> solve(double a, double b, double c) {
@@ -28,11 +30,10 @@ namespace Math {
         double d = b * b - 4 * a * c;
         std::vector<double> result;
 
-        if (d < 0) {
+        if (d < -default_eps) {
             return {};
         }
-        std::cout.precision(40);
-        std::cout << d << std::endl;
+
         if (close_to_zero(d)) {
             result.push_back((-b) / (2 * a));
             result.push_back((-b) / (2 * a));
