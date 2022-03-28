@@ -8,7 +8,7 @@ conan_basic_setup()
 enable_testing()
 find_package(GTest REQUIRED)
 
-add_executable(otus main.cpp func.h test/some.cpp)
+add_executable(otus main.cpp src/solver.h test/solver.test.cpp)
 target_link_libraries(otus ${CONAN_LIBS})
 
 include(GoogleTest)
