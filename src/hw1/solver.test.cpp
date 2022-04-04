@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 #include <gmock/gmock.h>
 #include <vector>
-#include "../src/solver.h"
+#include "solver.h"
 
 TEST(RootTests, HandleImagenaryRoots) {
     EXPECT_THAT(Math::solve(1, 0, 1), ::testing::IsEmpty()) << "There are some roots, but descriminant < 0";
