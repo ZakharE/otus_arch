@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "../src/rotation.h"
+#include "../rotation.h"
 #include "gtest/gtest.h"
 #include <gmock/gmock.h>
 

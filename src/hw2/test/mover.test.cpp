@@ -5,7 +5,7 @@
 
 #include "gtest/gtest.h"
 #include <gmock/gmock.h>
-#include "../src/movement.h"
+#include "../movement.h"
 
 class MockObject : public IMovable {
 public:
