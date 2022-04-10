@@ -6,53 +6,58 @@
 #define OTUS_EXCEPTION_HANDLER_H
 
 #include <exception>
-#include "command.h"
-#include <unordered_map>
 #include <typeinfo>
+#include <unordered_map>
 #include <queue>
 
-class ExceptionHandler {
+class CommandExceptionHandler {
+private:
+    std::shared_ptr<std::queue<std::shared_ptr<Command::Base>>> command_queue;
+    std::queue<std::shared_ptr<Command::Base>> command_to_add_queue;
 public:
-    std::unordered_map<std::size_t, std::shared_ptr<Command>> handlers;
+    CommandExceptionHandler(std::shared_ptr<std::queue<std::shared_ptr<Command::Base>>> &q)
+            : command_queue(q) {}
 
-    void handle(const Command &c, const std::exception &e);
+    void execute() {
+        command_queue->push(command_to_add_queue.front());
+        command_to_add_queue.pop();
+    };
 
-    void register_handle(const std::shared_ptr<Command> &command, const std::exception &exception,
-                         const std::shared_ptr<Command> &handler) {
+    void register_handle_command(std::shared_ptr<Command::Base> &c) {
+        command_to_add_queue.push(c);
+    }
+};
+
+
+class ExceptionHandlerService {
+public:
+    std::unordered_map<std::size_t, std::shared_ptr<CommandExceptionHandler>> handlers;
+
+    void register_handle(const std::shared_ptr<Command::Base> &command,
+                         const std::exception &exception,
+                         const std::shared_ptr<CommandExceptionHandler> &handler) {
         size_t combined_hash = get_hash(command, exception);
         handlers[combined_hash] = handler;
-    }
+    };
 
-    size_t get_hash(const std::shared_ptr<Command> &command, const std::exception &exception) {
+    void handle(const std::shared_ptr<Command::Base> &c, const std::exception &e) {
+        size_t combined_hash = get_hash(c, e);
+        if (handlers.count(combined_hash)) {
+            handlers[combined_hash]->execute();
+        }
+    };
+
+private:
+    size_t get_hash(const std::shared_ptr<Command::Base> &command, const std::exception &exception) {
         size_t exception_type_hash = typeid(exception).hash_code();
         size_t command_type_hash = typeid(command).hash_code();
         size_t combined_hash = combine_hash(exception_type_hash, command_type_hash);
         return combined_hash;
     };
 
-    void handle(const std::shared_ptr<Command> &c, const std::exception &e);
-
-private:
     std::size_t combine_hash(const std::size_t h1, const std::size_t h2) {
         return h1 ^ (h2 << 1);
     };
 };
 
-void ExceptionHandler::handle(const std::shared_ptr<Command> &c, const std::exception &e) {
-    size_t combined_hash = get_hash(command, exception);
-    handlers[combined_hash]->execute();
-}
-
-namespace ErrorHandler {
-    class LogWriter {
-    private:
-        std::queue<std::shared_ptr<Command>> *q;
-    public:
-        LogWriter(std::queue<std::shared_ptr<Command>> *q) : q(q) {}
-    };
-
-    void Execute(const std::shared_ptr<Command> &c) {
-        q.push(c);
-    }
-}
 #endif //OTUS_EXCEPTION_HANDLER_H
