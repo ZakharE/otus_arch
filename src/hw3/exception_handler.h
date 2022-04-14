@@ -23,7 +23,7 @@ public:
         command_to_add_queue.pop();
     };
 
-    void register_handle_command(std::shared_ptr<Command::Base> &c) {
+    void register_handle_command(const std::shared_ptr<Command::Base> &c) {
         command_to_add_queue.push(c);
     }
 };

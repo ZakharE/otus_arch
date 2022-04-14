@@ -28,17 +28,31 @@ namespace Command {
         ~LogWriter() override = default;
     };
 
-    class Repeater : public Base {
+    class OneTimeRepeater : public Base {
     private:
         std::shared_ptr<Base> command_to_repeat;
     public:
-        Repeater(const std::shared_ptr<Base> &c) : command_to_repeat(c) {};
+        OneTimeRepeater(const std::shared_ptr<Base> &c) : command_to_repeat(c) {};
 
         void execute() override {
             command_to_repeat->execute();
         }
 
-        ~Repeater() override = default;
+        ~OneTimeRepeater() override = default;
+    };
+
+    class TwoTimeRepeater : public Base {
+    private:
+        std::shared_ptr<Base> command_to_repeat;
+    public:
+        TwoTimeRepeater(const std::shared_ptr<Base> &c) : command_to_repeat(c) {};
+
+        void execute() override {
+            command_to_repeat->execute();
+            command_to_repeat->execute();
+        }
+
+        ~TwoTimeRepeater() override = default;
     };
 }
 #endif //OTUS_COMMAND_HANDLERS_H
