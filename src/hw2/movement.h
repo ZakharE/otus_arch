@@ -2,8 +2,7 @@
 // Created by Zakhar Eliseev on 28.03.2022.
 //
 
-#ifndef OTUS_MOVEMENT_H
-#define OTUS_MOVEMENT_H
+#pragma once
 
 #include "structs.h"
 
@@ -29,6 +28,3 @@ public:
         obj->set_position(obj->get_position() + obj->get_velocity());
     }
 };
-
-
-#endif //OTUS_MOVEMENT_H

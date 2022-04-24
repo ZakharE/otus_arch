@@ -1,7 +1,6 @@
 //
 // Created by Zakhar Eliseev on 29.03.2022.
 //
-#pragma once
 
 #include "gtest/gtest.h"
 #include <gmock/gmock.h>
