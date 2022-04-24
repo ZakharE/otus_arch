@@ -8,7 +8,7 @@ conan_basic_setup()
 enable_testing()
 find_package(GTest REQUIRED)
 
-add_executable(otus main.cpp src/hw1/solver.h src/hw1/solver.test.cpp src/structs.h src/movement.h test/mover.test.cpp src/rotation.h test/rotator.test.cpp)
+add_executable(otus main.cpp src/hw1/solver.h src/hw1/solver.test.cpp src/hw2/structs.h src/hw2/movement.h src/hw2/test/mover.test.cpp src/hw2/rotation.h src/hw2/test/rotator.test.cpp src/hw3/exception_handler.h src/hw3/command_handlers.h src/hw3/handler.test.cpp)
 target_link_libraries(otus ${CONAN_LIBS})
 
 include(GoogleTest)

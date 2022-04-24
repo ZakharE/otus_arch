@@ -50,5 +50,5 @@ TEST_P(RootTestFixture, HandleNonNumericValueSecondArgument) {
 
 TEST_P(RootTestFixture, HandleNonNumericValueThirdArgument) {
     EXPECT_THROW(Math::solve(1, 1, GetParam()), std::invalid_argument)
-                        << "No exception was thrown when 'c' is " << GetParam();;
+                        << "No exception was thrown when 'command_to_add' is " << GetParam();;
 }
