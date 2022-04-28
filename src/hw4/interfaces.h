@@ -5,7 +5,7 @@
 #ifndef OTUS_INTERFACES_H
 #define OTUS_INTERFACES_H
 
-#include "structs.h"
+#include "../test_shared/structs.h"
 #include <exception>
 #include <utility>
 
