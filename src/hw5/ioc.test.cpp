@@ -40,10 +40,3 @@ TEST(IoC_container, ExceptionIsThrown_IfCalledNonRegistredDependency) {
     std::vector<std::any> args = {1, 1, 1};
     EXPECT_THROW(c.resolve<int>("no.such.dependency", args), std::invalid_argument);
 }
-
-TEST(IoC_container, ExceptionIsThrown_IfCalledNonRegistredDependency) {
-    Container c;
-    c.init();
-    std::vector<std::any> args = {1, 1, 1};
-    EXPECT_THROW(c.resolve<int>("no.such.dependency", args), std::invalid_argument);
-}
