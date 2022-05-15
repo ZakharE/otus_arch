@@ -29,58 +29,70 @@ T get_required_arg(Args &args, const std::size_t &idx, const std::string &error)
 }
 
 class Container {
-    MapId2Lambda map;
-
-private:
-    std::shared_ptr<Container> p_instance;
+    MapId2Lambda commands;
+    std::map<std::string, std::shared_ptr<Container>> scopes;
 
 public:
     void init() {
-        p_instance = std::make_shared<Container>();
 
-        Function lambdaRegister = [&](Args args) {
+        Function register_command_func = [&](Args args) {
             auto id = get_required_arg<std::string>(args, 0, "invalid id, can't register");
             auto func = get_required_arg<Function>(args, 1, "invalid lambda, can't register");
-            std::shared_ptr<RegisterCommand> pCommand = std::make_shared<RegisterCommand>(p_instance, func, id);
+            std::shared_ptr<RegisterCommand> pCommand = std::make_shared<RegisterCommand>(this, func, id);
             return std::any(pCommand);
         };
 
-        p_instance->map.emplace("IoC.Register", lambdaRegister);
+        Function register_scope_func = [&](Args args) {
+            auto id = get_required_arg<const char*>(args, 0, "invalid id, can't register"); //hack for proper casting
+            scopes[id] = std::make_shared<Container>();
+            scopes[id]->init();
+            return std::any(scopes[id]);
+        };
+
+        commands.emplace("IoC.Register", register_command_func);
+        commands.emplace("Scope.New", register_scope_func);
     }
 
 
 public:
 
     template<typename T>
-    T resolve(const std::string &s, Args &args) {
-        auto it = p_instance->map.find(s);
-        if (it != p_instance->map.end()) {
+    T resolve(const std::string &command_name, Args &args) {
+        auto it = commands.find(command_name);
+        if (it != commands.end()) {
             try {
                 return std::any_cast<T>(it->second(args));
             } catch (std::bad_any_cast &e) {
+                std::cout << e.what();
                 throw std::invalid_argument(
-                        std::string("can't resolve: can't cast lambda call result to required type for id: " + s));
+                        std::string("can't resolve: can't cast lambda call result to required type for id: " +
+                                    command_name));
             }
         }
-        args.insert(args.begin(), s); //not effective, think about optimization
+
+
+        args.insert(args.begin(), command_name); //not effective, think about optimization
         return resolve<T>("IoC.Register", args);
 
     };
+
 public:
+
     class RegisterCommand : public Command::Command {
     private:
-        std::shared_ptr<Container> container;
+        Container &container;
         Function func_to_register;
         std::string id;
     public:
-        RegisterCommand(const shared_ptr<Container> &container, const Function &funcToRegister, const std::string &id)
-                : container(container), func_to_register(funcToRegister), id(id) {}
+        RegisterCommand(Container *container, const Function &funcToRegister, const std::string &id)
+                : container(*container), func_to_register(funcToRegister), id(id) {}
 
     public:
         void execute() override {
-            container->map.emplace(id, func_to_register);
+            container.commands.emplace(id, func_to_register);
         }
     };
+
 };
 
 #endif //OTUS_IOC_H
